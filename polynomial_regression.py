@@ -880,8 +880,27 @@ plt.show()
 Take 5–10 minutes to reflect (write 2–3 sentences in your report):
 
 - Where did **linear** regression fail, and what **nonlinearity** mechanism fixed it?
+Linear regression failed because it assumes an affine relationship between input and output, 
+making it structurally unable to capture the oscillatory pattern of sin(x) — no matter how much data is provided, 
+it will always underfit with high bias. Polynomial feature expansion fixed this by augmenting the input with higher-order terms (x², x³, …),
+allowing the model to remain linear in its parameters while fitting nonlinear patterns in the data.
+
 - What symptoms indicated **overfitting**, and which **metric split** helped you detect it?
+Overfitting was indicated by a widening gap between train MSE and test MSE as polynomial degree increased — the model achieved near-zero training error at degree 15–30, yet test error spiked dramatically, 
+revealing that it was memorizing noise rather than learning the underlying signal. The train/test split was the key diagnostic: without holding out a separate test set, 
+the deteriorating generalization would have been invisible.
+
 - How do **Ridge**, **Lasso**, and **Elastic Net** differ in their **penalties** and typical **coefficient patterns**?
+Ridge applies an L2 penalty (sum of squared coefficients), which smoothly shrinks all coefficients toward zero but rarely eliminates any — resulting in dense solutions. 
+Lasso uses an L1 penalty (sum of absolute values), which geometrically tends to push coefficients to exactly zero, producing sparse models with automatic feature selection. 
+Elastic Net blends both penalties via l1_ratio, offering sparsity like Lasso while remaining more stable when features are correlated (as polynomial terms often are).
+
 - Why is **cross-validation** preferable to repeatedly evaluating on the **test** set while tuning?
+Each time you evaluate on the test set to guide a tuning decision, you implicitly "use up" some of its information — the chosen hyperparameters gradually become optimized 
+for that specific test set rather than for unseen data, a form of indirect data leakage. 
+Cross-validation tunes hyperparameters entirely on the training data by rotating held-out folds, preserving the test set as a truly independent final evaluation.
 - What is one **real-world caution** when using high-degree polynomials without careful scaling or regularization?
+High-degree polynomial features can produce astronomically large values (e.g., x¹⁵ when x ~ 10 yields 10¹⁵), causing severe numerical instability, 
+ill-conditioned design matrices, and wildly large or oscillating coefficients — a phenomenon known as Runge's phenomenon near the edges of the input range. 
+Always standardize inputs with StandardScaler before applying PolynomialFeatures, and pair high-degree bases with regularization to keep the model numerically stable and well-behaved.
 """
